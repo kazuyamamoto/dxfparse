@@ -1,2 +1,12 @@
-﻿// For more information see https://aka.ms/fsharp-console-apps
-printfn "Hello from F#"
+﻿open System
+open System.IO
+
+let readLines (file: string) =
+    seq {
+        use reader = new StreamReader(file)
+
+        while not reader.EndOfStream do
+            yield reader.ReadLine()
+    }
+
+"sample.dxf" |> readLines |> Seq.iter (fun line -> printfn $"{line}")

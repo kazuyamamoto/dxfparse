@@ -1,6 +1,6 @@
 ﻿open System.IO
 
-let ReadLines (file: string) =
+let ReadLines (file: string) : seq<string> =
     seq {
         use reader = new StreamReader(file)
 
@@ -8,8 +8,15 @@ let ReadLines (file: string) =
             yield reader.ReadLine()
     }
 
+let LinePairs (lines: seq<string>) : seq<string * string> =
+    lines
+    |> Seq.indexed
+    |> Seq.groupBy (fun (index, _) -> index / 2)
+    |> Seq.map snd
+    |> Seq.map (fun seq -> (Seq.head seq, Seq.last seq))
+    |> Seq.map (fun ((_, line1), (_, line2)) -> (line1, line2))
+
 "sample.dxf"
 |> ReadLines
-// いつ自動フォーマットで改行するのかを確認するための無意味な処理（id は　入出力が同じことを表す関数）
-|> Seq.map id
-|> Seq.iter (fun line -> printfn $"{line}")
+|> LinePairs
+|> Seq.iter (fun pair -> printfn $"{pair}")

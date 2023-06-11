@@ -17,3 +17,16 @@ let LinePairs (lines: seq<string>) : seq<string * string> =
     |> Seq.map (fun ((_, line1), (_, line2)) -> (line1.Trim(), line2))
 
 "sample.dxf" |> ReadLines |> LinePairs |> Seq.iter (printfn "%A")
+
+let Section (pairs: seq<string * string>) =
+    let sectionStart pair =
+        match pair with
+        | "0", "SECTION" -> false
+        | _ -> true
+    let sectionEnd pair =
+        match pair with
+        | "0", "ENDSEC" -> false
+        | _ -> true
+    pairs
+    |> Seq.skipWhile sectionStart
+    |> Seq.takeWhile sectionEnd
